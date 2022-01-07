@@ -1,4 +1,4 @@
-const SHA256 = require('crypto-js/sha256')
+const SHA256 = require('crypto-js/sha256');
 const EC = require('elliptic').ec;
 const ec = new EC('secp256k1');
 
@@ -18,7 +18,7 @@ class Transaction{
         if(signingKey.getPublic('hex') !== this.fromAddress){
             throw new Error('You cannot sign transactions for other wallets!');
         }
-
+        
         const hashTx = this.calculateHash();
         const sig = signingKey.sign(hashTx, 'base64');
         this.signature = sig.toDER('hex');
@@ -50,7 +50,7 @@ class Block{
     }
 
     mineBlock(difficulty){
-        while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")){
+        while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("6")){
             this.nounce++;
             this.hash = this.calculateHash();
         }
@@ -72,7 +72,7 @@ class Block{
 class Blockchain{
     constructor(){
         this.chain = [this.createGenesisBlock()];
-        this.difficulty = 1;
+        this.difficulty = 4;
         this.pendingTransactions = [];
         this.miningReward = 100;
     }
@@ -99,16 +99,15 @@ class Blockchain{
     }
 
      addTransaction(transaction){
-
         if(!transaction.fromAddress || !transaction.toAddress){
-            throw new Error('Transaction must include from and to address!');
+            console.log('Transaction must include from and to address!');
+        }else if(!transaction.isValid()){
+            console.log('Cannot add invalid transaction to chain!')
+        }else if(transaction.amount >= this.getBalanceOfAddress(transaction.fromAddress)){
+            console.log("Not enough funds in account! ", transaction.fromAddress)
+        }else{
+            this.pendingTransactions.push(transaction);
         }
-
-        if(!transaction.isValid()){
-            throw new Error('Cannot add invalid transaction to chain!')
-        }
-
-        this.pendingTransactions.push(transaction);
     }
 
     getBalanceOfAddress(address){
