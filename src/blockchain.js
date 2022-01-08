@@ -50,7 +50,7 @@ class Block{
     }
 
     mineBlock(difficulty){
-        while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("6")){
+        while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")){
             this.nounce++;
             this.hash = this.calculateHash();
         }
@@ -72,9 +72,9 @@ class Block{
 class Blockchain{
     constructor(){
         this.chain = [this.createGenesisBlock()];
-        this.difficulty = 4;
+        this.difficulty = 3;
         this.pendingTransactions = [];
-        this.miningReward = 100;
+        this.miningReward = 1000;
     }
 
     createGenesisBlock(){
